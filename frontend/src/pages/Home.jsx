@@ -5,10 +5,14 @@ export default function Home() {
   const [posts, setPosts] = useState([]);
 
   async function getPosts() {
-    const res = await fetch("/api/posts");
-    const data = await res.json();
-    if (res.ok) {
-      setPosts(data);
+    try {
+      const res = await fetch("/api/posts");
+      if (res.ok) {
+        const data = await res.json();
+        setPosts(data);
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 

@@ -7,16 +7,19 @@ export default function AppProvider({ children }) {
   const [user, setUser] = useState(null);
 
   async function getUser() {
-    const res = await fetch("/api/user", {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await fetch("/api/user", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      setUser(data);
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data);
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 

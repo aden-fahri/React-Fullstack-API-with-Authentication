@@ -19,20 +19,28 @@ export default function Register() {
   async function handleRegister(e) {
     e.preventDefault();
 
-    const res = await fetch("/api/register", {
-      method: 'post',
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch("/api/register", {
+        method: 'post',
+        body: JSON.stringify(formData),
+      });
 
-    const data = await res.json();
-    
+      if (!res.ok && res.status >= 500) {
+        console.error("Server error", res.status);
+        return;
+      }
 
-    if (data.errors) {
-      setErrors(data.errors);
-    } else {
-      setToken(data.token);
-      navigate("/");
-      console.log("Registration successful", data);
+      const data = await res.json();
+
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        setToken(data.token);
+        navigate("/");
+        console.log("Registration successful", data);
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 

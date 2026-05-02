@@ -10,11 +10,14 @@ export default function Show() {
   const [post, setPost] = useState(null);
 
   async function getPost() {
-    const res = await fetch(`/api/posts/${id}`);
-    const data = await res.json();
-
-    if (res.ok) {
-      setPost(data.post);
+    try {
+      const res = await fetch(`/api/posts/${id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setPost(data.post);
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 
@@ -22,16 +25,20 @@ export default function Show() {
     e.preventDefault();
 
     if (user && user.id === post.user.id) {
-      const res = await fetch(`/api/posts/${id}`, {
-        method: "delete",
-        headers: {
-          authorization: `Bearer ${token}`,
-        },
-      });
+      try {
+        const res = await fetch(`/api/posts/${id}`, {
+          method: "delete",
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
 
-      const data = await res.json();
-      if (res.ok) {
-        navigate("/");
+        if (res.ok) {
+          await res.json();
+          navigate("/");
+        }
+      } catch (err) {
+        console.error("Network error", err);
       }
     }
   }

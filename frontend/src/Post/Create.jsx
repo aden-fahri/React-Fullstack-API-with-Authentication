@@ -15,20 +15,29 @@ export default function Create() {
   async function handleCreate(e) {
     e.preventDefault();
 
-    const res = await fetch("/api/posts", {
-      method: 'post',
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch("/api/posts", {
+        method: 'post',
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await res.json();
+      if (!res.ok && res.status >= 500) {
+        console.error("Server error", res.status);
+        return;
+      }
 
-    if (data.errors) {
-      setErrors(data.errors);
-    } else {
-      navigate("/");
+      const data = await res.json();
+
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 

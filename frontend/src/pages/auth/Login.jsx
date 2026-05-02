@@ -16,19 +16,28 @@ export default function Login() {
   async function handleLogin(e) {
     e.preventDefault();
 
-    const res = await fetch("/api/login", {
-      method: 'post',
-      body: JSON.stringify(formData),
-    });
+    try {
+      const res = await fetch("/api/login", {
+        method: 'post',
+        body: JSON.stringify(formData),
+      });
 
-    const data = await res.json();
+      if (!res.ok && res.status >= 500) {
+        console.error("Server error", res.status);
+        return;
+      }
 
-    if (data.errors) {
-      setErrors(data.errors);
-    } else {
-      setToken(data.token);
-      navigate("/");
-      console.log("Login successful", data);
+      const data = await res.json();
+
+      if (data.errors) {
+        setErrors(data.errors);
+      } else {
+        setToken(data.token);
+        navigate("/");
+        console.log("Login successful", data);
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 

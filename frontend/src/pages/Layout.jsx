@@ -9,20 +9,23 @@ export default function Layout() {
   async function handleLogout(e) {
     e.preventDefault();
 
-    const res = await fetch("/api/logout", {
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
-      method: "post",
-    });
+    try {
+      const res = await fetch("/api/logout", {
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+        method: "post",
+      });
 
-    const data = await res.json();
-
-    if (res.ok) {
-      setToken(null);
-      setUser(null);
-      localStorage.removeItem("token");
-      navigate("/login");
+      if (res.ok) {
+        await res.json();
+        setToken(null);
+        setUser(null);
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    } catch (err) {
+      console.error("Network error", err);
     }
   }
 
